@@ -1,0 +1,12 @@
+body {
+    width: 200px;
+    padding: 10px;
+  }
+  button {
+    display: block;
+    margin-top: 10px;
+  }
+  .draggable-popup {
+    cursor: move;
+    position: absolute;
+  }
