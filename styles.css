@@ -6,7 +6,3 @@ body {
     display: block;
     margin-top: 10px;
   }
-  .draggable-popup {
-    cursor: move;
-    position: absolute;
-  }
