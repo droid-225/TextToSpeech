@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
   <title>Text-to-Speech Reader</title>
@@ -7,8 +6,14 @@
 </head>
 <body>
   <h2>Text-to-Speech Reader <span id="extensionVersion"></span></h2>
-  <button id="readSelectedText">Read Selected Text</button>
-  <button id="startReading">Start Reading From Selected Text</button>
+  <button id="startReading">Start Reading From Top</button>
   <script src="popup.js"></script>
-  </body>
+  <div>  
+    <button id="toBeginning">To Beginning</button>
+    <button id="lastWord">Last Word</button>
+    <button id="pausePlay">Pause/Play</button>
+    <button id="nextWord">Next Word</button>
+    <button id="nextChunk">Next Chunk</button>
+  </div>
+</body>
 </html>
