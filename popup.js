@@ -8,8 +8,15 @@ const extensionVersionElement = document.getElementById('extensionVersion');
 extensionVersionElement.textContent = `v${extensionVersion}`;
 
 // 'Read Selected Text' Button Event Listener
-document.getElementById('startReading').addEventListener('click', () => {
+document.getElementById('readSelectedText').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'readSelectedText' });
     });
-  });
+});
+
+// 'Start Reading From Selected Text' Button Event Listener
+document.getElementById('startReading').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'startReading' });
+    });
+});
