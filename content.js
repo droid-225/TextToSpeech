@@ -1,56 +1,67 @@
-// content.js
+/*
+ * Notes: I have decided to remove the "read selected text" functionality
+ * in the main branch, only going to work on the "read until spacebar is 
+ * pressed" functionality.
+*/
+
+let isReading = false;
+let readingText = '';
 
 // Read Selected Text
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'readSelectedText') {
-    const selectedText = window.getSelection().toString();
-    if (selectedText) {
-      readText(selectedText);
-    }
-  }
-});
-
-function readText(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utterance);
-}
-
-// Read Until Spacebar is Pressed
-let isReading = false;
-let readingText = '';
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'startReading') {
     const selectedText = window.getSelection().toString().trim();
     if (selectedText) {
-      if (!isReading) {
-        readingText = selectedText + ' ' + window.getSelection().anchorNode.textContent.slice(window.getSelection().anchorOffset);
-        isReading = true;
-        readText();
-      }
+      isReading = true;
+      readingText = selectedText;
+      readText();
     }
   }
 });
 
+// Read Until Spacebar is Pressed
 function readText() {
-  if (isReading && readingText) {
+  if (isReading && readingText !== '') {
     const utterance = new SpeechSynthesisUtterance(readingText);
     speechSynthesis.speak(utterance);
 
     utterance.onend = () => {
       if (isReading) {
-        window.addEventListener('keydown', stopReadingOnSpace);
+        readNextChunk();
       }
     };
   }
 }
 
-function stopReadingOnSpace(event) {
-  if (event.keyCode === 32) { // Space bar key code
-    isReading = false;
-    readingText = '';
-    window.removeEventListener('keydown', stopReadingOnSpace);
-    speechSynthesis.cancel();
+function readNextChunk() {
+  if (isReading && readingText !== '') {
+    const remainingText = readingText.slice(utterance.charIndex);
+    const nextSpaceIndex = remainingText.indexOf(' ');
+
+    if (nextSpaceIndex === -1) {
+      // End of text reached
+      isReading = false;
+      readingText = '';
+      speechSynthesis.cancel();
+    } else {
+      const chunk = remainingText.slice(0, nextSpaceIndex + 1);
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      speechSynthesis.speak(utterance);
+
+      utterance.onend = () => {
+        if (isReading) {
+          readNextChunk();
+        }
+      };
+    }
   }
 }
 
+// Listen for spacebar press to stop reading
+window.addEventListener('keydown', (event) => {
+  if (isReading && event.keyCode === 32) { // Space bar key code
+    isReading = false;
+    readingText = '';
+    speechSynthesis.cancel();
+  }
+});
