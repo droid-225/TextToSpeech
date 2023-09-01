@@ -15,9 +15,10 @@ document.getElementById('startReading').addEventListener('click', () => {
   });
 });
 
-// Button listeners
 document.getElementById('pausePlay').addEventListener('click', () => {
-  sendMessageToContentScript('pausePlay');
+  if (isReading) {
+    sendMessageToContentScript('pausePlay');
+  }
 });
 
 function sendMessageToContentScript(action) {
