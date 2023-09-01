@@ -14,30 +14,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       readingText = fullPageText;
       isReading = true;
       readText();
-    } else {
+    } 
+    else {
       stopReading();
     }
-  } else if (message.action === 'toBeginning') {
-    if (isReading) {
-      toBeginning();
-    }
-  } else if (message.action === 'lastWord') {
-    if (isReading) {
-      lastWord();
-    }
-  } else if (message.action === 'pausePlay') {
+  } 
+  else if (message.action === 'pausePlay') {
     if (isReading) {
       pausePlay();
     }
-  } else if (message.action === 'nextWord') {
-    if (isReading) {
-      nextWord();
-    }
-  } else if (message.action === 'nextChunk') {
-    if (isReading) {
-      nextChunk();
-    }
-  }
+  } 
 });
 
 function readText() {
@@ -85,26 +71,16 @@ function stopReading() {
 }
 
 // Implement other functionalities like toBeginning, lastWord, and pausePlay
-
-
-function toBeginning() {
-  // Implement your logic to jump to the beginning of the text
-}
-
-function lastWord() {
-  // Implement your logic to jump to the previous word
-}
-
 function pausePlay() {
-  if (isReading) {
-    if (utterance.paused) {
-      speechSynthesis.resume();
-    } else {
-      speechSynthesis.pause();
+  if (isReading && utterance) {
+    if (speechSynthesis.speaking) {
+      if (speechSynthesis.paused) {
+        speechSynthesis.resume();
+      } 
+      else {
+        speechSynthesis.pause();
+      }
     }
   }
 }
 
-function nextWord() {
-  // Implement your logic to jump to the next word
-}

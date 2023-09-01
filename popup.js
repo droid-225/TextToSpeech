@@ -16,24 +16,8 @@ document.getElementById('startReading').addEventListener('click', () => {
 });
 
 // Button listeners
-document.getElementById('toBeginning').addEventListener('click', () => {
-  sendMessageToContentScript('toBeginning');
-});
-
-document.getElementById('lastWord').addEventListener('click', () => {
-  sendMessageToContentScript('lastWord');
-});
-
 document.getElementById('pausePlay').addEventListener('click', () => {
   sendMessageToContentScript('pausePlay');
-});
-
-document.getElementById('nextWord').addEventListener('click', () => {
-  sendMessageToContentScript('nextWord');
-});
-
-document.getElementById('nextChunk').addEventListener('click', () => {
-  sendMessageToContentScript('nextChunk');
 });
 
 function sendMessageToContentScript(action) {
