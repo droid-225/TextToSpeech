@@ -3,9 +3,7 @@ let utterance = null;
 let fullPageText = '';
 
 // Fetch all text content of the webpage
-document.addEventListener('DOMContentLoaded', () => {
-  fullPageText = document.body.innerText;
-});
+fullPageText = document.body.innerText;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startReading') {
@@ -27,9 +25,31 @@ function readText(text) {
 
     utterance.onend = () => {
       if (isReading) {
-        stopReading();
+        readNextChunk();
       }
     };
+  }
+}
+
+function readNextChunk() {
+  if (isReading) {
+    const remainingText = utterance.text.slice(utterance.charIndex);
+    const nextSpaceIndex = remainingText.indexOf(' ');
+
+    if (nextSpaceIndex === -1) {
+      // End of text reached
+      stopReading();
+    } else {
+      const chunk = remainingText.slice(0, nextSpaceIndex + 1);
+      utterance = new SpeechSynthesisUtterance(chunk);
+      speechSynthesis.speak(utterance);
+
+      utterance.onend = () => {
+        if (isReading) {
+          readNextChunk();
+        }
+      };
+    }
   }
 }
 
