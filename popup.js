@@ -7,18 +7,12 @@ extensionVersionElement.textContent = `v${extensionVersion}`;
 
 let isReading = false;
 
-document.getElementById('startReading').addEventListener('click', () => {
-  isReading = !isReading;
-  const action = isReading ? 'startReading' : 'stopReading';
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action });
-  });
+document.getElementById('pause').addEventListener('click', () => {
+  sendMessageToContentScript('pause');
 });
 
-document.getElementById('pausePlay').addEventListener('click', () => {
-  if (isReading) {
-    sendMessageToContentScript('pausePlay');
-  }
+document.getElementById('play').addEventListener('click', () => {
+  sendMessageToContentScript('play');
 });
 
 function sendMessageToContentScript(action) {

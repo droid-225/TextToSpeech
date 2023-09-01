@@ -1,20 +1,27 @@
 let isReading = false;
 let utterance = null;
 let fullPageText = '';
+let first = true;
 
 // Fetch all text content of the webpage
 fullPageText = document.body.innerText;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'startReading') {
+  if (message.action === 'play' && first) {
     if (!isReading) {
       isReading = true;
       readText(fullPageText);
-    } else {
+    } 
+    else {
       stopReading();
     }
-  } else if (message.action === 'pausePlay') {
-    pausePlay();
+    first = false;
+  }
+  else if (message.action === 'play' && !first) {
+    playSpeech();
+  }
+  else if (message.action === 'pause') {
+    pauseSpeech();
   }
 });
 
@@ -61,12 +68,16 @@ function stopReading() {
   isReading = false;
 }
 
-function pausePlay() {
-  if (isReading) {
-    if (utterance.paused) {
-      speechSynthesis.resume();
-    } else {
-      speechSynthesis.pause();
-    }
+function pauseSpeech() {
+  if (isReading && !utterance.paused) {
+    speechSynthesis.pause();
+    isReading = false;
+  }
+}
+
+function playSpeech() {
+  if (isReading && utterance.paused) {
+    speechSynthesis.resume();
+    isReading = true;
   }
 }
