@@ -1,28 +1,32 @@
 let isReading = false;
 let utterance = null;
-let fullPageText = '';
 let first = true;
 
-// Fetch all text content of the webpage
-fullPageText = document.body.innerText;
-
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'play' && first) {
-    if (!isReading) {
-      isReading = true;
-      readText(fullPageText);
-    } 
-    else {
-      stopReading();
+// Fetch all text content of the webpage after the page has loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const fullPageText = document.body.innerText;
+  
+  // Send a message to the popup script indicating that 'DOMContentLoaded' has occurred
+  chrome.runtime.sendMessage({ action: 'DOMContentLoaded' });
+  
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'play' && first) {
+      if (!isReading) {
+        isReading = true;
+        readText(fullPageText);
+      } 
+      else {
+        stopReading();
+      }
+      first = false;
     }
-    first = false;
-  }
-  else if (message.action === 'play' && !first) {
-    playSpeech();
-  }
-  else if (message.action === 'pause') {
-    pauseSpeech();
-  }
+    else if (message.action === 'play' && !first) {
+      playSpeech();
+    }
+    else if (message.action === 'pause') {
+      pauseSpeech();
+    }
+  });
 });
 
 function readText(text) {
@@ -71,13 +75,11 @@ function stopReading() {
 function pauseSpeech() {
   if (isReading && !utterance.paused) {
     speechSynthesis.pause();
-    isReading = false;
   }
 }
 
 function playSpeech() {
-  if (isReading && utterance.paused) {
+  if (!isReading && utterance.paused) {
     speechSynthesis.resume();
-    isReading = true;
   }
 }

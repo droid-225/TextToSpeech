@@ -5,6 +5,15 @@ const extensionVersion = chrome.runtime.getManifest().version;
 const extensionVersionElement = document.getElementById('extensionVersion');
 extensionVersionElement.textContent = `v${extensionVersion}`;
 
+// Listen for messages from the content script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'DOMContentLoaded') {
+    // You can update the popup HTML or display a message here
+    const messageElement = document.getElementById('message');
+    messageElement.textContent = 'Page has fully loaded!'; // Customize the message as needed
+  }
+});
+
 let isReading = false;
 
 document.getElementById('pause').addEventListener('click', () => {
