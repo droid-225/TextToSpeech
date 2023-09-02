@@ -2,12 +2,18 @@ let isReading = false;
 let utterance = null;
 let first = true;
 
+// Add a listener for the 'checkPageLoaded' action
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'checkPageLoaded') {
+    if (document.readyState === 'complete') {
+      chrome.runtime.sendMessage({ action: 'pageLoaded' });
+    } 
+  }
+});
+
 // Fetch all text content of the webpage after the page has loaded
 document.addEventListener('DOMContentLoaded', () => {
   const fullPageText = document.body.innerText;
-  
-  // Send a message to the popup script indicating that 'DOMContentLoaded' has occurred
-  chrome.runtime.sendMessage({ action: 'DOMContentLoaded' });
   
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'play' && first) {

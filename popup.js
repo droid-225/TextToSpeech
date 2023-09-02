@@ -5,16 +5,23 @@ const extensionVersion = chrome.runtime.getManifest().version;
 const extensionVersionElement = document.getElementById('extensionVersion');
 extensionVersionElement.textContent = `v${extensionVersion}`;
 
-// Listen for messages from the content script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'DOMContentLoaded') {
-    // You can update the popup HTML or display a message here
-    const messageElement = document.getElementById('message');
-    messageElement.textContent = 'Page has fully loaded!'; // Customize the message as needed
-  }
+// Send a message to the content script to request page loading status
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  chrome.tabs.sendMessage(tabs[0].id, { action: 'checkPageLoaded' });
 });
 
-let isReading = false;
+// Listen for messages from the content script
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'pageLoaded') {
+    // The content script has confirmed that the page is loaded
+    const messageElement = document.getElementById('message');
+    messageElement.textContent = 'Page Loaded!';
+  } 
+  else {
+    const messageElement = document.getElementById('message');
+    messageElement.textContent = 'Page Loading!'; 
+  }
+});
 
 document.getElementById('pause').addEventListener('click', () => {
   sendMessageToContentScript('pause');
