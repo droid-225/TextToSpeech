@@ -42,31 +42,9 @@ function readText(text) {
 
     utterance.onend = () => {
       if (isReading) {
-        readNextChunk();
+        stopReading();
       }
     };
-  }
-}
-
-function readNextChunk() {
-  if (isReading) {
-    const remainingText = utterance.text.slice(utterance.charIndex);
-    const nextSpaceIndex = remainingText.indexOf(' ');
-
-    if (nextSpaceIndex === -1) {
-      // End of text reached
-      stopReading();
-    } else {
-      const chunk = remainingText.slice(0, nextSpaceIndex + 1);
-      utterance = new SpeechSynthesisUtterance(chunk);
-      speechSynthesis.speak(utterance);
-
-      utterance.onend = () => {
-        if (isReading) {
-          readNextChunk();
-        }
-      };
-    }
   }
 }
 
