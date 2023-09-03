@@ -6,14 +6,14 @@ let fullPageText = '';
 fullPageText = document.body.innerText;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'startReading') {
+  if (message.action === 'Play') {
     if (!isReading) {
       isReading = true;
       readText(fullPageText);
     } else {
       stopReading();
     }
-  } else if (message.action === 'pausePlay') {
+  } else if (message.action === 'Pause') {
     pausePlay();
   }
 });
@@ -62,11 +62,5 @@ function stopReading() {
 }
 
 function pausePlay() {
-  if (isReading) {
-    if (utterance.paused) {
-      speechSynthesis.resume();
-    } else {
-      speechSynthesis.pause();
-    }
-  }
+  speechSynthesis.pause();
 }

@@ -7,17 +7,17 @@ extensionVersionElement.textContent = `v${extensionVersion}`;
 
 let isReading = false;
 
-document.getElementById('startReading').addEventListener('click', () => {
+document.getElementById('Play').addEventListener('click', () => {
   isReading = !isReading;
-  const action = isReading ? 'startReading' : 'stopReading';
+  const action = isReading ? 'Play' : 'stopReading';
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, { action });
   });
 });
 
-document.getElementById('pausePlay').addEventListener('click', () => {
+document.getElementById('Pause').addEventListener('click', () => {
   if (isReading) {
-    sendMessageToContentScript('pausePlay');
+    sendMessageToContentScript('Pause');
   }
 });
 
