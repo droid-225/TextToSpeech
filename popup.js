@@ -8,17 +8,11 @@ extensionVersionElement.textContent = `v${extensionVersion}`;
 let isReading = false;
 
 document.getElementById('Play').addEventListener('click', () => {
-  isReading = !isReading;
-  const action = isReading ? 'Play' : 'stopReading';
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action });
-  });
+  sendMessageToContentScript('Play');
 });
 
 document.getElementById('Pause').addEventListener('click', () => {
-  if (isReading) {
-    sendMessageToContentScript('Pause');
-  }
+  sendMessageToContentScript('Pause');
 });
 
 function sendMessageToContentScript(action) {

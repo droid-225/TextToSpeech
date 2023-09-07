@@ -7,14 +7,15 @@ fullPageText = document.body.innerText;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'Play') {
+    console.log('Play');
     if (!isReading) {
       isReading = true;
       readText(fullPageText);
-    } else {
-      stopReading();
-    }
-  } else if (message.action === 'Pause') {
-    pausePlay();
+    } 
+  } 
+  else if (message.action === 'Pause') {
+    console.log('Pause');
+    pause();
   }
 });
 
@@ -22,45 +23,10 @@ function readText(text) {
   if (isReading) {
     utterance = new SpeechSynthesisUtterance(text);
     speechSynthesis.speak(utterance);
-
-    utterance.onend = () => {
-      if (isReading) {
-        readNextChunk();
-      }
-    };
   }
 }
 
-function readNextChunk() {
-  if (isReading) {
-    const remainingText = utterance.text.slice(utterance.charIndex);
-    const nextSpaceIndex = remainingText.indexOf(' ');
-
-    if (nextSpaceIndex === -1) {
-      // End of text reached
-      stopReading();
-    } else {
-      const chunk = remainingText.slice(0, nextSpaceIndex + 1);
-      utterance = new SpeechSynthesisUtterance(chunk);
-      speechSynthesis.speak(utterance);
-
-      utterance.onend = () => {
-        if (isReading) {
-          readNextChunk();
-        }
-      };
-    }
-  }
-}
-
-function stopReading() {
-  if (utterance) {
-    utterance.onend = null;
-    speechSynthesis.cancel();
-  }
-  isReading = false;
-}
-
-function pausePlay() {
+function pause() {
   speechSynthesis.pause();
+  isReading = false;
 }
